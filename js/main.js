@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'flag':
                     response = "Redirecting to restricted area...";
                     setTimeout(() => {
-                        window.location.href = '/about';
+                        window.location.href = '/flag';
                     }, 1000);
                     break;
                 case '':
