@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tymolu233 | System Online</title>
+    <meta name="description" content="Personal homepage of tymolu233. Developer, coder, tech enthusiast.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="scanlines"></div>
+    <div class="container">
+        <header class="hero">
+            <div class="avatar-container">
+                <img src="https://github.com/tymolu233.png" alt="tymolu233 avatar" class="avatar">
+                <div class="avatar-glow"></div>
+            </div>
+            <h1 class="glitch" data-text="tymolu233">tymolu233</h1>
+            <p class="subtitle">System Status: <span class="status-online">ONLINE</span></p>
+        </header>
+
+        <section class="bio">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="title">user@tymolu233:~</span>
+                </div>
+                <div class="terminal-body" id="terminal-output">
+                    <p class="prompt">cat bio.txt</p>
+                    <p id="typing-text"></p>
+                    <div class="input-line">
+                        <span class="prompt-sign">user@tymolu233:~$</span>
+                        <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" autofocus>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="projects">
+            <h2><span class="hash">#</span> Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>ManifestAutoUpdate</h3>
+                    <p>Automated manifest updates with Python & JS.</p>
+                    <div class="tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">JavaScript</span>
+                    </div>
+                    <a href="https://github.com/tymolu233/ManifestAutoUpdate" target="_blank" class="btn">Access
+                        Data</a>
+                </div>
+                <!-- Placeholder for more projects -->
+                <div class="project-card">
+                    <h3>[REDACTED]</h3>
+                    <p>Top secret project. Access denied.</p>
+                    <div class="tags">
+                        <span class="tag">Unknown</span>
+                    </div>
+                    <a href="#" class="btn disabled">Locked</a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2025 tymolu233. All systems nominal.</p>
+            <div class="social-links">
+                <a href="https://github.com/tymolu233" target="_blank">GitHub</a>
+            </div>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
