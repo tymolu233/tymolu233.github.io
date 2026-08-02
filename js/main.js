@@ -1,177 +1,141 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Matrix Rain Effect ---
-    const canvas = document.getElementById('matrix-canvas');
-    const ctx = canvas.getContext('2d');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Soft ambient particles keep the page alive without competing with the content.
+    const canvas = document.getElementById('ambient-canvas');
+    const context = canvas.getContext('2d');
+    let particles = [];
+    let animationFrame;
 
-    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
-    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const nums = '0123456789';
-    const alphabet = katakana + latin + nums;
+    const resizeCanvas = () => {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = window.innerWidth * ratio;
+        canvas.height = window.innerHeight * ratio;
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
 
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
+        const particleCount = Math.min(42, Math.max(18, Math.floor(window.innerWidth / 32)));
+        particles = Array.from({ length: particleCount }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            radius: Math.random() * 1.4 + 0.35,
+            speed: Math.random() * 0.16 + 0.04,
+            alpha: Math.random() * 0.36 + 0.08
+        }));
+    };
 
-    const rainDrops = [];
-    for (let x = 0; x < columns; x++) {
-        rainDrops[x] = 1;
+    const drawAmbient = () => {
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        particles.forEach((particle) => {
+            particle.y -= particle.speed;
+            if (particle.y < -5) particle.y = window.innerHeight + 5;
+
+            context.beginPath();
+            context.fillStyle = `rgba(165, 242, 107, ${particle.alpha})`;
+            context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+            context.fill();
+        });
+
+        if (!prefersReducedMotion) animationFrame = requestAnimationFrame(drawAmbient);
+    };
+
+    resizeCanvas();
+    drawAmbient();
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+
+    // Reveal sections as they enter the viewport.
+    const revealItems = document.querySelectorAll('.reveal:not(.is-visible)');
+    if ('IntersectionObserver' in window && !prefersReducedMotion) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            });
+        }, { threshold: 0.12 });
+        revealItems.forEach((item) => revealObserver.observe(item));
+    } else {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
     }
 
-    function drawMatrix() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = '#0F0';
-        ctx.font = fontSize + 'px monospace';
-
-        for (let i = 0; i < rainDrops.length; i++) {
-            const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-            ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-
-            if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                rainDrops[i] = 0;
-            }
-            rainDrops[i]++;
-        }
-    }
-
-    setInterval(drawMatrix, 30);
-
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
-
-    // --- Terminal Logic ---
-    const text = "When I wirting my code, only God and I know what it does. After a while, only God knows.";
-    const typingElement = document.getElementById('typing-text');
+    // Small interactive terminal.
     const terminalOutput = document.getElementById('terminal-output');
+    const terminalForm = document.getElementById('terminal-form');
     const terminalInput = document.getElementById('terminal-input');
-    const speed = 30;
-    let i = 0;
+    const terminalWindow = document.querySelector('.terminal-window');
+    const typingElement = document.getElementById('typing-text');
+    const welcomeText = 'Welcome, curious human. Type help for a map.';
+    let typingIndex = 0;
 
-    function typeWriter() {
-        if (i < text.length) {
-            typingElement.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(typeWriter, speed);
-        } else {
-            // Show input line after typing finishes
-            document.querySelector('.input-line').style.display = 'flex';
-            terminalInput.focus();
+    const typeWelcome = () => {
+        if (typingIndex >= welcomeText.length) return;
+        typingElement.textContent += welcomeText.charAt(typingIndex);
+        typingIndex += 1;
+        window.setTimeout(typeWelcome, prefersReducedMotion ? 0 : 32);
+    };
+    window.setTimeout(typeWelcome, prefersReducedMotion ? 0 : 450);
+
+    const focusTerminal = () => terminalInput.focus();
+    terminalWindow.addEventListener('click', focusTerminal);
+
+    const commandResponses = {
+        help: 'Available commands:\n  about     who is behind the keyboard\n  projects  open the selected work\n  contact   find me on GitHub\n  clear     clear the terminal',
+        about: 'A developer turning repetitive work into small, reliable tools. Currently learning in public.',
+        projects: 'Opening the project index below. Try the repository links for the source.',
+        contact: 'Signal found: github.com/tymolu233',
+        clear: ''
+    };
+
+    const addTerminalLine = (text, className = '') => {
+        const line = document.createElement('p');
+        line.className = `terminal-line ${className}`.trim();
+        line.textContent = text;
+        terminalOutput.appendChild(line);
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    };
+
+    const runCommand = (rawCommand) => {
+        const command = rawCommand.trim().toLowerCase();
+        if (!command) return;
+
+        addTerminalLine(`guest@tymolu233:~$ ${rawCommand}`, 'terminal-muted');
+
+        if (command === 'clear') {
+            terminalOutput.innerHTML = '';
+            return;
         }
-    }
 
-    // Hide input initially
-    document.querySelector('.input-line').style.display = 'none';
-    setTimeout(typeWriter, 1000);
-
-    // --- Sound Effects (Web Audio API) ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playSound(type) {
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
+        if (command === 'projects') {
+            addTerminalLine(commandResponses.projects);
+            window.setTimeout(() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' }), 180);
+            return;
         }
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
 
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        if (type === 'type') {
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
-            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.05);
-        } else if (type === 'enter') {
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
-            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.1);
+        if (command === 'contact') {
+            addTerminalLine(commandResponses.contact);
+            window.setTimeout(() => window.open('https://github.com/tymolu233', '_blank', 'noopener,noreferrer'), 320);
+            return;
         }
-    }
 
-    // Command Handling
-    terminalInput.addEventListener('keydown', function (e) {
-        playSound('type');
-        if (e.key === 'Enter') {
-            playSound('enter');
-            const command = this.value.trim().toLowerCase();
-            const outputDiv = document.createElement('div');
-            outputDiv.innerHTML = `<p><span class="prompt-sign">user@tymolu233:~$</span> ${this.value}</p>`;
+        addTerminalLine(commandResponses[command] || `Command not found: ${command}. Type help for available commands.`,
+            commandResponses[command] ? '' : 'terminal-muted');
+    };
 
-            let response = '';
-            switch (command) {
-                case 'help':
-                    response = `Available commands:
-  <span style="color: #fff">about</span>    - Who am I?
-  <span style="color: #fff">projects</span> - View my work
-  <span style="color: #fff">contact</span>  - Get in touch
-  <span style="color: #fff">clear</span>    - Clear terminal
-  <span style="color: #fff">help</span>     - Show this menu`;
-                    break;
-                case 'about':
-                    response = "I am a developer who loves coding in the dark. I build things that break, then fix them.";
-                    break;
-                case 'projects':
-                    response = "Check out the projects section below. Or visit my GitHub: <a href='https://github.com/tymolu233' target='_blank' style='color: #00f3ff'>github.com/tymolu233</a>";
-                    break;
-                case 'contact':
-                    response = "Signal lost... just kidding. Find me on GitHub.";
-                    break;
-                case 'clear':
-                    // Remove all previous siblings of the input line
-                    while (terminalOutput.firstChild && terminalOutput.firstChild !== document.querySelector('.input-line')) {
-                        terminalOutput.removeChild(terminalOutput.firstChild);
-                    }
-                    this.value = '';
-                    return; // Exit early
-                case 'flag':
-                    response = "Redirecting to restricted area...";
-                    setTimeout(() => {
-                        window.location.href = '/flag';
-                    }, 1000);
-                    break;
-                case '':
-                    response = '';
-                    break;
-                default:
-                    response = `Command not found: ${command}. Type 'help' for a list of commands.`;
-            }
-
-            if (response) {
-                outputDiv.innerHTML += `<p style="color: #ccc; margin-bottom: 10px; white-space: pre-wrap;">${response}</p>`;
-            }
-
-            terminalOutput.insertBefore(outputDiv, document.querySelector('.input-line'));
-            this.value = '';
-
-            // Auto scroll to bottom
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        }
+    terminalForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        runCommand(terminalInput.value);
+        terminalInput.value = '';
     });
 
-    // Keep focus on input
-    document.querySelector('.terminal-window').addEventListener('click', () => {
-        terminalInput.focus();
+    document.querySelectorAll('[data-command]').forEach((button) => {
+        button.addEventListener('click', () => {
+            runCommand(button.dataset.command);
+            focusTerminal();
+        });
     });
 
-    // Glitch Effect Randomization
-    const glitchElement = document.querySelector('.glitch');
-    setInterval(() => {
-        const r1 = Math.random() * 10;
-        const r2 = Math.random() * 10;
-        glitchElement.style.setProperty('--r1', r1);
-        glitchElement.style.setProperty('--r2', r2);
-    }, 2000);
+    window.addEventListener('beforeunload', () => {
+        cancelAnimationFrame(animationFrame);
+    });
 });

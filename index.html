@@ -1,82 +1,231 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tymolu233 | System Online</title>
-    <meta name="description" content="Personal homepage of tymolu233. Developer, coder, tech enthusiast.">
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="theme-color" content="#080a0f">
+    <meta name="description"
+        content="The personal homepage of tymolu233 — automation, developer tools, and small experiments.">
+    <meta property="og:title" content="tymolu233 — Build less noise. Make more useful.">
+    <meta property="og:description" content="Automation, developer tools, and small experiments.">
+    <meta property="og:image" content="assets/51531250.jpg">
+    <meta property="og:type" content="website">
+    <title>tymolu233 — Build less noise.</title>
+    <link rel="icon" href="assets/51531250.jpg" type="image/jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Share+Tech+Mono&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <canvas id="matrix-canvas"></canvas>
-    <div class="scanlines"></div>
-    <div class="container">
-        <header class="hero">
-            <div class="avatar-container">
-                <img src="assets/51531250.jpg" alt="tymolu233 avatar" class="avatar">
-                <div class="avatar-glow"></div>
-            </div>
-            <h1 class="glitch" data-text="tymolu233">tymolu233</h1>
-            <p class="subtitle">System Status: <span class="status-online">ONLINE</span></p>
+    <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <div class="page-shell">
+        <header class="site-header">
+            <a class="brand" href="#top" aria-label="tymolu233 home">
+                <span class="brand-mark" aria-hidden="true">&gt;_</span>
+                <span>tymolu233</span>
+            </a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a href="#about">about</a>
+                <a href="#playground">playground</a>
+                <a href="#projects">projects</a>
+                <a class="nav-github" href="https://github.com/tymolu233" target="_blank" rel="noopener noreferrer">
+                    <span>github</span>
+                    <span aria-hidden="true">↗</span>
+                </a>
+            </nav>
         </header>
 
-        <section class="bio">
-            <div class="terminal-window">
-                <div class="terminal-header">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
-                    <span class="title">user@tymolu233:~</span>
-                </div>
-                <div class="terminal-body" id="terminal-output">
-                    <p class="prompt">cat bio.txt</p>
-                    <p id="typing-text"></p>
-                    <div class="input-line">
-                        <span class="prompt-sign">user@tymolu233:~$</span>
-                        <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" autofocus>
+        <main id="top">
+            <section class="hero section-pad" id="about">
+                <div class="hero-copy reveal is-visible">
+                    <p class="eyebrow"><span class="eyebrow-mark"></span> developer / automation / experiments</p>
+                    <h1>Build less noise.<br><em>Make more useful.</em></h1>
+                    <p class="hero-lede">
+                        <span lang="zh-CN">把重复的事情交给代码，把好奇心留给自己。</span><br>
+                        Turning repetitive work into small, reliable tools — and leaving room for the next experiment.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="https://github.com/tymolu233" target="_blank"
+                            rel="noopener noreferrer">View GitHub <span aria-hidden="true">↗</span></a>
+                        <a class="button button-ghost" href="#projects">Explore projects <span
+                                aria-hidden="true">↓</span></a>
                     </div>
+                    <div class="availability"><span class="availability-dot"></span> quietly online · always
+                        learning</div>
                 </div>
-            </div>
-        </section>
 
-        <section class="projects">
-            <h2><span class="hash">#</span> Projects</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <h3>ManifestAutoUpdate</h3>
-                    <p>Automated manifest updates with Python & JS.</p>
-                    <div class="tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">JavaScript</span>
+                <div class="hero-visual reveal is-visible">
+                    <div class="profile-card">
+                        <div class="card-topbar">
+                            <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                            <span>profile.json</span>
+                            <span class="topbar-meta">read-only</span>
+                        </div>
+                        <div class="profile-card-body">
+                            <div class="profile-intro">
+                                <div class="avatar-wrap">
+                                    <img src="assets/51531250.jpg" alt="tymolu233 avatar" class="avatar">
+                                    <span class="avatar-status" title="Online"></span>
+                                </div>
+                                <div>
+                                    <p class="profile-name">tymolu233</p>
+                                    <p class="profile-handle">@building-in-public</p>
+                                </div>
+                            </div>
+                            <p class="profile-copy">A small corner for code, useful shortcuts, and ideas that are
+                                still becoming.</p>
+                            <div class="code-snippet" aria-label="Current focus">
+                                <p><span class="syntax-keyword">const</span> <span class="syntax-name">focus</span>
+                                    = [</p>
+                                <p class="code-indent"><span class="syntax-string">"automation"</span>,</p>
+                                <p class="code-indent"><span class="syntax-string">"developer tools"</span>,</p>
+                                <p class="code-indent"><span class="syntax-string">"good experiments"</span></p>
+                                <p>];</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span><i class="footer-signal"></i> system online</span>
+                            <span>v2025.01</span>
+                        </div>
                     </div>
-                    <a href="https://github.com/tymolu233/ManifestAutoUpdate" target="_blank" class="btn">Access
-                        Data</a>
+                    <div class="orbit orbit-one" aria-hidden="true"></div>
+                    <div class="orbit orbit-two" aria-hidden="true"></div>
                 </div>
-                <!-- Placeholder for more projects -->
-                <div class="project-card">
-                    <h3>[REDACTED]</h3>
-                    <p>Top secret project. Access denied.</p>
-                    <div class="tags">
-                        <span class="tag">Unknown</span>
-                    </div>
-                    <a href="#" class="btn disabled">Locked</a>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <footer class="footer">
-            <p>&copy; 2025 tymolu233. All systems nominal.</p>
-            <div class="social-links">
-                <a href="https://github.com/tymolu233" target="_blank">GitHub</a>
-            </div>
+            <section class="principles section-pad reveal" aria-label="Working principles">
+                <article class="principle">
+                    <span class="principle-number">01 /</span>
+                    <h2>Automate</h2>
+                    <p>Let scripts handle the repetitive parts.</p>
+                </article>
+                <article class="principle">
+                    <span class="principle-number">02 /</span>
+                    <h2>Experiment</h2>
+                    <p>Keep curiosity close to the keyboard.</p>
+                </article>
+                <article class="principle">
+                    <span class="principle-number">03 /</span>
+                    <h2>Share</h2>
+                    <p>Make useful things easy to find.</p>
+                </article>
+            </section>
+
+            <section class="playground section-pad" id="playground">
+                <div class="section-heading reveal">
+                    <div>
+                        <p class="eyebrow"><span class="eyebrow-mark"></span> interactive layer</p>
+                        <h2>Talk to the terminal.</h2>
+                    </div>
+                    <p class="section-description">A tiny command line for this tiny corner of the internet. Type
+                        <code>help</code> to begin.</p>
+                </div>
+
+                <div class="terminal-layout reveal">
+                    <div class="terminal-window">
+                        <div class="terminal-topbar">
+                            <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                            <span>guest@tymolu233: ~</span>
+                            <span class="terminal-live"><i></i> live</span>
+                        </div>
+                        <div class="terminal-body" id="terminal-output" role="log" aria-live="polite"
+                            aria-relevant="additions">
+                            <p class="terminal-line terminal-muted">booting personal interface...</p>
+                            <p class="terminal-line terminal-muted">connection established.</p>
+                            <p class="terminal-line"><span class="prompt-sign">guest@tymolu233:~$</span> cat welcome.txt</p>
+                            <p class="terminal-line" id="typing-text"></p>
+                        </div>
+                        <form class="input-line" id="terminal-form">
+                            <label class="prompt-sign" for="terminal-input">guest@tymolu233:~$</label>
+                            <input type="text" id="terminal-input" autocomplete="off" spellcheck="false"
+                                aria-label="Terminal command" placeholder="try help">
+                        </form>
+                    </div>
+                    <aside class="command-panel">
+                        <p class="panel-label">available commands</p>
+                        <div class="command-list">
+                            <button type="button" class="command-chip" data-command="about">about</button>
+                            <button type="button" class="command-chip" data-command="projects">projects</button>
+                            <button type="button" class="command-chip" data-command="contact">contact</button>
+                            <button type="button" class="command-chip" data-command="clear">clear</button>
+                            <button type="button" class="command-chip" data-command="help">help</button>
+                        </div>
+                        <p class="panel-tip"><span aria-hidden="true">↳</span> Click the terminal or use the command
+                            buttons.</p>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="projects section-pad" id="projects">
+                <div class="section-heading reveal">
+                    <div>
+                        <p class="eyebrow"><span class="eyebrow-mark"></span> selected work</p>
+                        <h2>Things worth opening.</h2>
+                    </div>
+                    <a class="text-link" href="https://github.com/tymolu233?tab=repositories" target="_blank"
+                        rel="noopener noreferrer">all repositories <span aria-hidden="true">↗</span></a>
+                </div>
+
+                <div class="project-grid">
+                    <article class="project-card project-card-featured reveal">
+                        <div class="project-card-header">
+                            <span class="project-index">01</span>
+                            <span class="project-status"><i></i> public</span>
+                        </div>
+                        <div class="project-icon" aria-hidden="true">↻</div>
+                        <h3>ManifestAutoUpdate</h3>
+                        <p>Automated manifest updates for a smoother release workflow. Small utility, less manual
+                            maintenance.</p>
+                        <div class="project-card-footer">
+                            <div class="tags"><span>Python</span><span>JavaScript</span><span>automation</span></div>
+                            <a class="project-link" href="https://github.com/tymolu233/ManifestAutoUpdate" target="_blank"
+                                rel="noopener noreferrer">View repository <span aria-hidden="true">↗</span></a>
+                        </div>
+                    </article>
+
+                    <article class="project-card reveal">
+                        <div class="project-card-header">
+                            <span class="project-index">02</span>
+                            <span class="project-status project-status-muted">in progress</span>
+                        </div>
+                        <div class="project-icon project-icon-alt" aria-hidden="true">✦</div>
+                        <h3>More experiments</h3>
+                        <p>Scripts, prototypes, and half-finished ideas live on GitHub. Some are polished; all are
+                            learning.</p>
+                        <div class="project-card-footer">
+                            <div class="tags"><span>open source</span><span>ideas</span></div>
+                            <a class="project-link" href="https://github.com/tymolu233" target="_blank"
+                                rel="noopener noreferrer">Browse GitHub <span aria-hidden="true">↗</span></a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="contact-card section-pad reveal" id="contact">
+                <div>
+                    <p class="eyebrow"><span class="eyebrow-mark"></span> keep in touch</p>
+                    <h2>Have a useful problem?</h2>
+                    <p>Open an issue, start a conversation, or just say hi. The best place to find me is GitHub.</p>
+                </div>
+                <a class="button button-primary" href="https://github.com/tymolu233" target="_blank"
+                    rel="noopener noreferrer">Say hello <span aria-hidden="true">↗</span></a>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <span>© 2025 tymolu233</span>
+            <span class="footer-center">built with curiosity <span aria-hidden="true">·</span> no tracking</span>
+            <a href="#top">back to top <span aria-hidden="true">↑</span></a>
         </footer>
     </div>
+
     <script src="js/main.js"></script>
 </body>
 
